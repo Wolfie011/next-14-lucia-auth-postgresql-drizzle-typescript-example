@@ -13,14 +13,51 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectSeparator,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
-import { SignUpSchema } from "../types"
-import { signUp } from "../actions/auth.actions"
+import { SignUpSchema } from "@/types"
+import { signUp } from "@/actions/auth.actions"
 import { toast } from "@/components/ui/use-toast"
 import { useRouter } from "next/navigation"
+import { useState, useEffect } from "react"
 
 export function SignUpForm() {
   const router = useRouter()
+
+  const [domains, setDomains] = useState<{ label: string; value: string; isActive: boolean; }[]>([])
+
+  const getDomains = async () => {
+    const res = await fetch("/api/domain")
+    const data = await res.json()
+    return data
+  }
+
+  // Fetch domains when the component mounts
+  useEffect(() => {
+    const fetchDomains = async () => {
+      const domainData = await getDomains()
+
+      // Map the fetched domains to { label, value, isActive } format for the Select component
+      const formattedDomains = domainData.map((domain: any) => ({
+        label: domain.domain, 
+        value: domain.id,
+        isActive: domain.isActive,
+      }))
+      
+      setDomains(formattedDomains)
+    }
+
+    fetchDomains()
+  }, [])
 
   const form = useForm<z.infer<typeof SignUpSchema>>({
     resolver: zodResolver(SignUpSchema),
@@ -28,6 +65,7 @@ export function SignUpForm() {
       username: "",
       password: "",
       confirmPassword: "",
+      domain: "",
     },
   })
 
@@ -84,6 +122,37 @@ export function SignUpForm() {
               <FormLabel>Confirm password</FormLabel>
               <FormControl>
                 <Input placeholder="****" type="password" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="domain"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Domain</FormLabel>
+              <FormControl>
+                <Select
+                  value={field.value}
+                  onValueChange={(value) => form.setValue("domain", value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a domain" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectLabel>Domains</SelectLabel>
+                      <SelectSeparator />
+                      {domains.map((domain) => (
+                        <SelectItem key={domain.value} value={domain.value} disabled={!domain.isActive}>
+                          {domain.label}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
               </FormControl>
               <FormMessage />
             </FormItem>

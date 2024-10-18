@@ -1,11 +1,15 @@
 import { defineConfig } from "drizzle-kit"
 export default defineConfig({
-  schema: "./lib/database/schema.ts",
   out: "./drizzle",
-  driver: "pg",
+  schema: "./lib/database/schema.ts",
+  dialect: "postgresql",
   dbCredentials: {
-    connectionString: process.env.DB_URL!,
-  },
-  verbose: true,
-  strict: true,
+    host: "127.0.0.1",
+    port: 5432,
+    user: "postgres",
+    password: "Leauge1231",
+    database: "testNext",
+    ssl: false,
+  }
+  
 })

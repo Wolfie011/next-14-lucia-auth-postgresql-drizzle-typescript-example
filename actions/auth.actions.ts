@@ -1,27 +1,26 @@
 "use server"
 import { z } from "zod"
-import { SignInSchema, SignUpSchema } from "../types"
+import { SignInSchema, SignUpSchema } from "@/types"
 import { generateId } from "lucia"
 import db from "@/lib/database"
 import { userTable } from "@/lib/database/schema"
 import { lucia, validateRequest } from "@/lib/lucia"
 import { cookies } from "next/headers"
-import { eq } from "drizzle-orm"
+import { eq, and } from "drizzle-orm"
 import * as argon2 from "argon2"
 
 export const signUp = async (values: z.infer<typeof SignUpSchema>) => {
-  console.log(values)
-
+  // console.log(values)
   const hashedPassword = await argon2.hash(values.password)
   const userId = generateId(15)
 
   try {
-    await db
-      .insert(userTable)
+    await db.insert(userTable)
       .values({
         id: userId,
         username: values.username,
         hashedPassword,
+        domainId: values.domain,
       })
       .returning({
         id: userTable.id,
@@ -63,8 +62,13 @@ export const signIn = async (values: z.infer<typeof SignInSchema>) => {
   }
 
   const existingUser = await db.query.userTable.findFirst({
-    where: (table) => eq(table.username, values.username),
-  })
+      where: (table) => 
+        and(
+          eq(table.username, values.username),
+          eq(table.domainId, values.domain)
+        )
+    })
+  
 
   if (!existingUser) {
     return {

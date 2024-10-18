@@ -1,33 +1,19 @@
 {
-  "version": "5",
-  "dialect": "pg",
+  "version": "7",
+  "dialect": "postgresql",
   "entries": [
     {
       "idx": 0,
-      "version": "5",
-      "when": 1708517043074,
-      "tag": "0000_conscious_harry_osborn",
+      "version": "7",
+      "when": 1729293027239,
+      "tag": "0000_living_stranger",
       "breakpoints": true
     },
     {
       "idx": 1,
-      "version": "5",
-      "when": 1708517226153,
-      "tag": "0001_bouncy_manta",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "5",
-      "when": 1708517236097,
-      "tag": "0002_pale_winter_soldier",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "5",
-      "when": 1708518008136,
-      "tag": "0003_romantic_peter_parker",
+      "version": "7",
+      "when": 1729293159571,
+      "tag": "0001_stale_starhawk",
       "breakpoints": true
     }
   ]
