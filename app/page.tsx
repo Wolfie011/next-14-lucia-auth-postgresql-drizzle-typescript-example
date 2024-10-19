@@ -20,7 +20,7 @@ export default async function Home() {
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <p>Protected route</p>
       <p>{JSON.stringify(user)}</p>
-      <p>{JSON.stringify(userAdditionalData)}</p>
+      <p className="text-nowrap	">{JSON.stringify(userAdditionalData)}</p>
       <form action={handleSignOut}>
         <Button type="submit">Sign out</Button>
       </form>

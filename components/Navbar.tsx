@@ -39,8 +39,8 @@ export default async function Navbar() {
           </div>
         )}
         <div className="flex space-x-2">
-          {user && <Cog userName={`${userAdditionalData?.firstname} ${userAdditionalData?.lastname}`} />}
           <ModeToggle />
+          {user && <Cog userName={`${userAdditionalData?.firstname} ${userAdditionalData?.lastname}`} />}
         </div>
       </div>
     </nav>
