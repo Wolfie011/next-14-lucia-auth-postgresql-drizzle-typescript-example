@@ -17,6 +17,7 @@ export const lucia = new Lucia(adapter, {
     return {
       id: attributes.id,
       username: attributes.username,
+      domainId: attributes.domainId
     }
   },
 })
@@ -71,7 +72,6 @@ export const validateRequest = cache(async () => {
   };
 });
 
-
 // IMPORTANT!
 declare module "lucia" {
   interface Register {
@@ -82,6 +82,7 @@ declare module "lucia" {
   interface DatabaseUserAttributes {
     id: string;
     username: string;
+    domainId: string;
   }
 
   interface AdditionalUserAttributes {

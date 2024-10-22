@@ -12,9 +12,9 @@ import { DataTableColumnHeader } from "@/components/table/data-table-column-head
 
 import { DataTableRowActions } from "@/components/table/data-table-row-actions";
 
-import { UserSchema } from "@/types";
+import { UserAdditionalSchema } from "@/types";
 
-export const columns: ColumnDef<UserSchema>[] = [
+export const columns: ColumnDef<UserAdditionalSchema>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -38,17 +38,17 @@ export const columns: ColumnDef<UserSchema>[] = [
     ),
     enableSorting: false,
     enableHiding: false,
-    size: 50, // Adjust as needed
+    // Let the table calculate the width based on content
+    minSize: 50,
+    maxSize: 60,
   },
   {
     accessorKey: "id",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Identyfikator" />
     ),
-    cell: ({ row }) => <div className="w-[20]">{row.getValue("id")}</div>,
-    size: 80, // Width in pixels
-    enableSorting: false,
-    enableHiding: false,
+    cell: ({ row }) => <div className="truncate">{row.getValue("id")}</div>,
+    minSize: 80,
   },
   {
     accessorKey: "username",
@@ -59,45 +59,47 @@ export const columns: ColumnDef<UserSchema>[] = [
       const label = labelRoles.find((label) => label.value === row.original.role);
 
       return (
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-2 min-w-0">
           {label && <Badge variant="outline">{label.label}</Badge>}
-          <span className="flex-grow max-w-[500px] truncate font-medium">{row.getValue("username")}</span>
+          <span className="flex-grow truncate font-medium">{row.getValue("username")}</span>
         </div>
       );
     },
-    size: 200, // Adjust width
+    minSize: 150,
+    maxSize: 200,
   },
   {
     accessorKey: "firstname",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="First Name" />
     ),
-    cell: ({ row }) => <div className="w-32">{row.getValue("firstname")}</div>,
-    size: 100,
+    cell: ({ row }) => <div className="truncate">{row.getValue("firstname")}</div>,
+    minSize: 100,
   },
   {
     accessorKey: "lastname",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Last Name" />
     ),
-    cell: ({ row }) => <div className="w-32">{row.getValue("lastname")}</div>,
-    size: 100,
+    cell: ({ row }) => <div className="truncate">{row.getValue("lastname")}</div>,
+    minSize: 100,
   },
   {
     accessorKey: "email",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Email" />
     ),
-    cell: ({ row }) => <div className="w-50">{row.getValue("email")}</div>,
-    size: 200,
+    cell: ({ row }) => <div className="truncate">{row.getValue("email")}</div>,
+    minSize: 200,
+    maxSize: 300,
   },
   {
     accessorKey: "phone",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Phone" />
     ),
-    cell: ({ row }) => <div className="w-40">{row.getValue("phone")}</div>,
-    size: 120,
+    cell: ({ row }) => <div className="truncate">{row.getValue("phone")}</div>,
+    minSize: 100,
   },
   {
     accessorKey: "status",
@@ -112,7 +114,7 @@ export const columns: ColumnDef<UserSchema>[] = [
       }
 
       return (
-        <div className="flex w-32 items-center">
+        <div className="flex items-center">
           {status.icon && (
             <status.icon className="mr-2 h-4 w-4 text-muted-foreground" />
           )}
@@ -120,20 +122,18 @@ export const columns: ColumnDef<UserSchema>[] = [
         </div>
       );
     },
-    size: 100,
-    filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id));
-    },
+    minSize: 80,
+    maxSize: 100,
   },
   {
     id: "actions",
     cell: ({ row }) => {
-
       return (
-        <div className="w-30">
+        <div className="w-10">
           <DataTableRowActions row={row} />
         </div>
-      )
-    }
+      );
+    },
+    minSize: 50,
   },
 ];

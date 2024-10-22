@@ -9,49 +9,6 @@ import { cookies } from "next/headers"
 import { eq, and } from "drizzle-orm"
 import * as argon2 from "argon2"
 
-export const signUp = async (values: z.infer<typeof SignUpSchema>) => {
-  // console.log(values)
-  const hashedPassword = await argon2.hash(values.password)
-  const userId = generateId(15)
-
-  try {
-    await db.insert(userTable)
-      .values({
-        id: userId,
-        username: values.username,
-        hashedPassword,
-        domainId: values.domain,
-      })
-      .returning({
-        id: userTable.id,
-        username: userTable.username,
-      })
-
-    const session = await lucia.createSession(userId, {
-      expiresIn: 60 * 60 * 24 * 30,
-    })
-
-    const sessionCookie = lucia.createSessionCookie(session.id)
-
-    cookies().set(
-      sessionCookie.name,
-      sessionCookie.value,
-      sessionCookie.attributes
-    )
-
-    return {
-      success: true,
-      data: {
-        userId,
-      },
-    }
-  } catch (error: any) {
-    return {
-      error: error?.message,
-    }
-  }
-}
-
 export const signIn = async (values: z.infer<typeof SignInSchema>) => {
   try {
     SignInSchema.parse(values)

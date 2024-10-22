@@ -1,6 +1,10 @@
 "use client";
 
-import { DotsHorizontalIcon } from "@radix-ui/react-icons";
+import {
+  ClipboardCopyIcon,
+  DotsHorizontalIcon,
+  Pencil1Icon,
+} from "@radix-ui/react-icons";
 import { Row } from "@tanstack/react-table";
 
 import { Button } from "@/components/ui/button";
@@ -11,7 +15,6 @@ import {
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
@@ -19,7 +22,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 import { labelRoles } from "@/components/table/data";
-
 import { userSchemaAdditional } from "@/types/index";
 
 interface DataTableRowActionsProps<TData> {
@@ -43,12 +45,29 @@ export function DataTableRowActions<TData>({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[160px]">
-        <DropdownMenuItem>Edit</DropdownMenuItem>
-        <DropdownMenuItem>Copy ObjectId</DropdownMenuItem>
-        {/* <DropdownMenuItem>Favorite</DropdownMenuItem> */}
+        {/* Edit button */}
+        <DropdownMenuItem asChild>
+          <Button variant="outline" className="flex w-full items-center justify-between gap-x-2">
+            Edit
+            <Pencil1Icon className="h-4 w-4" />
+          </Button>
+        </DropdownMenuItem>
+
+        {/* Copy ObjectId button */}
+        <DropdownMenuItem asChild className="my-1">
+          <Button variant="outline" className="flex w-full items-center justify-between gap-x-2">
+            Copy ObjectId
+            <ClipboardCopyIcon className="h-4 w-4" />
+          </Button>
+        </DropdownMenuItem>
+
         <DropdownMenuSeparator />
+
+        {/* Role selection submenu */}
         <DropdownMenuSub>
-          <DropdownMenuSubTrigger>Role</DropdownMenuSubTrigger>
+          <DropdownMenuSubTrigger className="flex items-center gap-x-2">
+            Role
+          </DropdownMenuSubTrigger>
           <DropdownMenuSubContent>
             <DropdownMenuRadioGroup value={user.role}>
               {labelRoles.map((label) => (
@@ -59,8 +78,15 @@ export function DataTableRowActions<TData>({
             </DropdownMenuRadioGroup>
           </DropdownMenuSubContent>
         </DropdownMenuSub>
+
         <DropdownMenuSeparator />
-        <DropdownMenuItem>Delete</DropdownMenuItem>
+
+        {/* Delete button */}
+        <DropdownMenuItem asChild>
+          <Button variant="destructive" className="h-8 w-full">
+            Delete
+          </Button>
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

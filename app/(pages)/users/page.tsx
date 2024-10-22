@@ -37,7 +37,7 @@ export default async function UserPage() {
     }
   
     return (
-      <div className="container py-10 ">
+      <div className="p-10">
         <DataTable columns={columns} data={data} />
       </div>
     )

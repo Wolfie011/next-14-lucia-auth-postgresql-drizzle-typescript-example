@@ -24,6 +24,7 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
+import { CreateUserDialog } from "@/components/forms/createUserDialog";
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
@@ -102,10 +103,11 @@ export function DataTableToolbar<TData>({
         )}
       </div>
       <DataTableViewOptions table={table} />
-      <Button variant='outline' size="sm" className="mx-2 h-8">
+      <CreateUserDialog />
+      {/* <Button variant='outline' size="sm" className="mx-2 h-8">
         <PersonIcon className="h-4 w-4" />
         Create new user
-      </Button>
+      </Button> */}
     </div>
   );
 }
