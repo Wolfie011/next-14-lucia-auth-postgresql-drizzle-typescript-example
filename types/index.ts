@@ -18,16 +18,14 @@ export const SignUpSchema = z
     message: "Passwords do not match",
     path: ["confirmPassword"],
   });
-export const newPasswordSchema = z
-  .object({
-    username: z.string().min(2).max(50),
+
+export const newPasswordSchema = z.object({
     password: z
       .string()
       .min(8, { message: "Password must be at least 8 characters long" }),
     confirmPassword: z
       .string()
       .min(8, { message: "Password must be at least 8 characters long" }),
-    domain: z.string().min(1),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",
@@ -49,7 +47,8 @@ export const userSchemaAdditional = z.object({
   email: z.string(),
   username: z.string(),
   phone: z.string(),
-  role: z.string(),
+  roleAccess: z.string(),
+  roleType: z.string(),
   status: z.string(),
 });
 export type UserAdditionalSchema = z.infer<typeof userSchemaAdditional>;
@@ -61,7 +60,8 @@ export const userSchemaBase = z.object({
   email: z.string(),
   username: z.string(),
   phone: z.string(),
-  role: z.string(),
+  roleAccess: z.string(),
+  roleType: z.string(),
   status: z.string(),
 });
 export type UserBaseSchema = z.infer<typeof userSchemaBase>;

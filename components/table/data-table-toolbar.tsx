@@ -5,7 +5,7 @@ import {
   TrashIcon,
   LockClosedIcon,
   LockOpen2Icon,
-  PersonIcon
+  PersonIcon,
 } from "@radix-ui/react-icons";
 import { Table } from "@tanstack/react-table";
 
@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DataTableViewOptions } from "@/components/table/data-table-view-options";
 
-import { accountStatuses } from "@/components/table/data";
+import { accountStatuses, labelRoles, labelRolePrimary } from "@/components/table/data";
 import { DataTableFacetedFilter } from "@/components/table/data-table-faceted-filter";
 
 import {
@@ -70,13 +70,41 @@ export function DataTableToolbar<TData>({
         </DropdownMenu>
 
         <Input
+          placeholder="Filter username..."
+          value={(table.getColumn("username")?.getFilterValue() as string) ?? ""}
+          onChange={(event) =>
+            table.getColumn("username")?.setFilterValue(event.target.value)
+          }
+          className="h-8 w-[120px] lg:w-[200px]"
+        />
+        <Input
           placeholder="Filter email..."
           value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
             table.getColumn("email")?.setFilterValue(event.target.value)
           }
-          className="h-8 w-[150px] lg:w-[250px]"
+          className="h-8 w-[120px] lg:w-[200px]"
         />
+
+        {/* Filter for rolePrimary (labelRolePrimary) */}
+        {table.getColumn("roleType") && (
+          <DataTableFacetedFilter
+            column={table.getColumn("roleType")}
+            title="Role Primary"
+            options={labelRolePrimary}
+          />
+        )}
+        {/* Filter for roleAccess (labelRoles) */}
+        {table.getColumn("roleAccess") && (
+          <DataTableFacetedFilter
+            column={table.getColumn("roleAccess")}
+            title="Role Access"
+            options={labelRoles}
+          />
+        )}
+
+
+
         {table.getColumn("status") && (
           <DataTableFacetedFilter
             column={table.getColumn("status")}
@@ -84,13 +112,7 @@ export function DataTableToolbar<TData>({
             options={accountStatuses}
           />
         )}
-        {/* {table.getColumn("priority") && (
-          <DataTableFacetedFilter
-            column={table.getColumn("priority")}
-            title="Priority"
-            options={priorities}
-          />
-        )} */}
+        
         {isFiltered && (
           <Button
             variant="ghost"
@@ -104,10 +126,6 @@ export function DataTableToolbar<TData>({
       </div>
       <DataTableViewOptions table={table} />
       <CreateUserDialog />
-      {/* <Button variant='outline' size="sm" className="mx-2 h-8">
-        <PersonIcon className="h-4 w-4" />
-        Create new user
-      </Button> */}
     </div>
   );
 }

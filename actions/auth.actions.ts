@@ -49,7 +49,7 @@ export const signIn = async (values: z.infer<typeof SignInSchema>) => {
       error: "Incorrect username or password",
     }
   }
-
+  // console.log(existingUser.id)
   const session = await lucia.createSession(existingUser.id, {
     expiresIn: 60 * 60 * 24 * 30,
   })

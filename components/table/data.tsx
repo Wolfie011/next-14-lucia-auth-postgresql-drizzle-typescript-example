@@ -12,12 +12,35 @@ import {
       label: "Admin",
     },
     {
-      value: "moderator",
+      value: "mod",
       label: "Moderator",
     },
     {
       value: "user",
       label: "User",
+    },
+  ]
+
+  export const labelRolePrimary = [
+    {
+      value: "nonRole",
+      label: "No Role",
+    },
+    {
+      value: "IT",
+      label: "IT",
+    },
+    {
+      value: "Doctor",
+      label: "Doctor",
+    },
+    {
+      value: "Nurse",
+      label: "Nurse",
+    },
+    {
+      value: "Technician",
+      label: "Technician",
     },
   ]
   

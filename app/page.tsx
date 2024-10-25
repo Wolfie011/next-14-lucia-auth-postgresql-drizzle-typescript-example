@@ -22,19 +22,21 @@ export default async function Home() {
 
   // Render the protected route and modal
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      {/* Check if the user's role is 'not-activated' */}
+    <>
+      {/* Render the modal outside the main content */}
       {userAdditionalData.status === "not-activated" && (
-        <PasswordSetupModal /> // Display the unskippable modal for setting up a new password
+        <PasswordSetupModal /> // Display the modal unskippable
       )}
 
       {/* Protected content for activated users */}
-      <p>Protected route</p>
-      <p>{JSON.stringify(user)}</p>
-      <p className="text-nowrap">{JSON.stringify(userAdditionalData)}</p>
-      <form action={handleSignOut}>
-        <Button type="submit">Sign out</Button>
-      </form>
-    </main>
+      <main className="flex min-h-screen flex-col items-center justify-between p-24">
+        <p>Protected route</p>
+        <p>{JSON.stringify(user, null, 2)}</p>
+        <p className="">{JSON.stringify(userAdditionalData, null, 2)}</p>
+        <form action={handleSignOut}>
+          <Button type="submit">Sign out</Button>
+        </form>
+      </main>
+    </>
   );
 }

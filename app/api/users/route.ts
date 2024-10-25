@@ -43,7 +43,8 @@ export async function POST(request: Request) {
         lastname: lastname,
         email: email,
         phone: phone,
-        role: role,
+        roleAccess: role,
+        roleType: 'nonRole',
         status: 'not-activated',
       });
 

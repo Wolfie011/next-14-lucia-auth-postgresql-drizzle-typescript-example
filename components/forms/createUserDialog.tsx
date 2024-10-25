@@ -82,7 +82,7 @@ export function CreateUserDialog() {
     <Dialog>
       <DialogTrigger asChild>
         <Button variant="outline" size="sm" className="mx-2 hidden h-8 lg:flex">
-          +<PersonIcon className="mr-2 h-4 w-4" />
+          <PersonIcon className="mr-2 h-4 w-4" />
           Add new User
         </Button>
       </DialogTrigger>

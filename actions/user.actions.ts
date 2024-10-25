@@ -3,7 +3,7 @@ import { z } from "zod";
 import db from "@/lib/database";
 import { eq } from "drizzle-orm";
 import { userTable, userDataTable } from "@/lib/database/schema";
-import { userSchemaBase, UserBaseSchema, SignUpSchema } from "@/types";
+import { userSchemaBase, UserBaseSchema, SignUpSchema, newPasswordSchema } from "@/types";
 import { generateId } from "lucia";
 import * as argon2 from "argon2";
 import { validateRequest } from "@/lib/lucia";
@@ -18,7 +18,8 @@ export async function getUsers(): Promise<UserBaseSchema[]> {
       lastName: userDataTable.lastname,
       email: userDataTable.email,
       phone: userDataTable.phone,
-      role: userDataTable.role,
+      roleAccess: userDataTable.roleAccess,
+      roleType: userDataTable.roleType,
       status: userDataTable.status,
     })
     .from(userTable)
@@ -33,7 +34,8 @@ export async function getUsers(): Promise<UserBaseSchema[]> {
       lastname: user.lastName,
       email: user.email,
       phone: user.phone || "", // Handle phone being nullable, set to an empty string if null
-      role: user.role,
+      roleAccess: user.roleAccess,
+      roleType: user.roleType,
       status: user.status,
     };
 
@@ -87,7 +89,8 @@ export const createUsers = async (values: z.infer<typeof SignUpSchema>) => {
         lastname: values.lastName,
         email: values.email,
         phone: values.phone,
-        role: values.role as "user" | "admin" | "mod",
+        roleAccess: values.role as "user" | "admin" | "mod",
+        roleType: 'nonRole',
         status: "not-activated",
       });
 
@@ -118,7 +121,7 @@ export async function deleteUser(userId: string) {
       error: "No authenticated user found",
     };
   }
-  if(['admin', 'mod'].includes(userAdditionalData?.role ?? '')) {
+  if(['admin', 'mod'].includes(userAdditionalData?.roleAccess ?? '')) {
     return {
         error: "Insuficient permission",
     };
@@ -127,6 +130,61 @@ export async function deleteUser(userId: string) {
   try {
     await db.delete(userDataTable).where(eq(userDataTable.userId, userId));
     await db.delete(userTable).where(eq(userTable.id, userId));
+    return {
+      success: true,
+    };
+  } catch (error: any) {
+    return {
+      error: error?.message,
+    };
+  }
+}
+
+export const setNewPassword = async (values: z.infer<typeof newPasswordSchema>) => {
+  const { user } = await validateRequest();
+  if(!user) {
+    return {
+      error: "No authenticated user found",
+    };
+  }
+  try {
+    newPasswordSchema.parse(values);
+    const hashedPassword = await argon2.hash(values.password);
+
+    await db.update(userTable).set({
+      hashedPassword: hashedPassword,
+    }).where(eq(userTable.id, user.id));
+    await db.update(userDataTable).set({
+      status: "active",
+    }).where(eq(userDataTable.userId, user.id));
+    return {
+      success: true,
+    }
+  } catch (error: any) {
+    return {
+      error: error?.message,
+    };
+  }
+}
+
+export async function changeUserRole(userId: string, role: string) {
+  // const { user, userAdditionalData } = await validateRequest();
+  // if(!user) {
+  //   return {
+  //     error: "No authenticated user found",
+  //   };
+  // }
+  // if(['admin', 'mod'].includes(userAdditionalData?.roleAccess ?? '')) {
+  //   return {
+  //       error: "Insuficient permission",
+  //   };
+  // }
+
+  try {
+    console.log("userId", userId, "role", role);
+    await db.update(userDataTable).set({
+      roleAccess: role as "user" | "admin" | "mod",
+    }).where(eq(userDataTable.userId, userId));
     return {
       success: true,
     };

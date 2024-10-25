@@ -2,7 +2,7 @@ import { AdditionalUserAttributes, Lucia } from "lucia"
 import adapter from "./adapter"
 import { cookies } from "next/headers"
 import { cache } from "react"
-import { roleEnums, userStatusEnums } from "@/lib/database/schema"
+import { roleAccessEnum, roleTypeEnum, userStatusEnum } from "@/lib/database/schema"
 import db from '@/lib/database/index'
 import { eq, and } from "drizzle-orm"
 
@@ -92,8 +92,9 @@ declare module "lucia" {
     lastname: string;
     email: string;
     phone: string | null; // Allow null here
-    role: (typeof roleEnums.enumValues)[number];
-    status: (typeof userStatusEnums.enumValues)[number];
+    roleAccess: (typeof roleAccessEnum.enumValues)[number];
+    roleType: (typeof roleTypeEnum.enumValues)[number];
+    status: (typeof userStatusEnum.enumValues)[number];
   }
 }
 

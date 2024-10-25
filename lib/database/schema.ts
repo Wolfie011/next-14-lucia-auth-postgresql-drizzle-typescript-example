@@ -1,42 +1,51 @@
-import { pgEnum, pgTable, text, timestamp, boolean } from "drizzle-orm/pg-core"
+import { pgEnum, pgTable, text, timestamp, boolean, uuid } from "drizzle-orm/pg-core";
 
-export const roleEnums = pgEnum("role", ["user", "admin", "mod"])
+// Enums
+export const roleAccessEnum = pgEnum("role_access", ["user", "admin", "mod"]);
+export const roleTypeEnum = pgEnum("role_type", ["nonRole", "IT", "Doctor", "Nurse", "Technician"]);
 
-export const userStatusEnums = pgEnum("status", ['active', 'blocked', 'disabled', 'not-activated', 'canceled'])
+export const userStatusEnum = pgEnum("user_status", ['active', 'blocked', 'disabled', 'not-activated', 'canceled']);
 
-
+// Domain Table
 export const domainTable = pgTable("domain", {
-  id: text("id").primaryKey(),
+  id: uuid("id").primaryKey(),
   domain: text("domain").notNull().unique(),
-  db_url: text("db_url").notNull(),
+  dbUrl: text("db_url").notNull(),
   isActive: boolean("is_active").notNull().default(true),
-})
+});
 
+// User Table
 export const userTable = pgTable("user", {
-  id: text("id").primaryKey(),
+  id: uuid("id").primaryKey(),
   username: text("username").notNull().unique(),
   hashedPassword: text("hashed_password"),
-  domainId: text("domain_id").notNull().references(() => domainTable.id),
-})
+  domainId: uuid("domain_id").notNull().references(() => domainTable.id, { onDelete: "cascade" }),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow().$onUpdateFn(() => new Date()), // Use $onUpdateFn
+});
 
-export const userDataTable = pgTable("userdata", {
-  id: text("id").primaryKey(),
-  userId: text("user_id").notNull().references(() => userTable.id),
+// User Data Table
+export const userDataTable = pgTable("user_data", {
+  id: uuid("id").primaryKey(),
+  userId: uuid("user_id").notNull().references(() => userTable.id, { onDelete: "cascade" }),
   firstname: text("firstname").notNull(),
   lastname: text("lastname").notNull(),
   email: text("email").notNull().unique(),
   phone: text("phone"),
-  role: roleEnums("role").notNull().default("user"),
-  status: userStatusEnums("status").notNull().default("not-activated"),
-})
+  roleAccess: roleAccessEnum("role_access").notNull().default("user"),
+  roleType: roleTypeEnum("role_type").notNull().default("nonRole"),
+  status: userStatusEnum("user_status").notNull().default("not-activated"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow().$onUpdateFn(() => new Date()), // Use $onUpdateFn
+});
 
+// Session Table
 export const sessionTable = pgTable("session", {
   id: text("id").primaryKey(),
-  userId: text("user_id")
-    .notNull()
-    .references(() => userTable.id),
+  userId: uuid("user_id").notNull().references(() => userTable.id, { onDelete: "cascade" }),
   expiresAt: timestamp("expires_at", {
     withTimezone: true,
     mode: "date",
   }).notNull(),
-})
+  createdAt: timestamp("created_at").defaultNow(),
+});

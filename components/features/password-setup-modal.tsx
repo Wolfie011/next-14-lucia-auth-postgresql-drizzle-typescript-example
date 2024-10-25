@@ -3,6 +3,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+
 import {
   Dialog,
   DialogContent,
@@ -11,10 +12,12 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
+
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { newPasswordSchema } from "@/types";
+import { setNewPassword } from "@/actions/user.actions";
 
 import {
   Form,
@@ -24,9 +27,16 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+
 import { Input } from "@/components/ui/input";
+import { toast } from "@/components/ui/use-toast";
+import { redirect, useRouter } from "next/navigation";
 
 export function PasswordSetupModal() {
+  const router = useRouter()
+
+  const [open, setOpen] = useState(true); // Control for modal visibility
+
   const form = useForm<z.infer<typeof newPasswordSchema>>({
     resolver: zodResolver(newPasswordSchema),
     defaultValues: {
@@ -36,13 +46,26 @@ export function PasswordSetupModal() {
   });
 
   async function onSubmit(values: z.infer<typeof newPasswordSchema>) {
-    // Handle the form submission for password setup
+    console.log("testStart");
+    const res = await setNewPassword(values);
+    if (res.error) {
+      toast({
+        variant: "destructive",
+        description: res.error,
+      });
+    } else if (res.success) {
+      toast({
+        variant: "default",
+        description: "Account activated successfully",
+      });
+      setOpen(false);
+    }
   }
 
   return (
-    <Dialog open={true}>
-      <DialogContent className="inset-0 flex items-center justify-center bg-black bg-opacity-50">
-        <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogContent className="flex items-center justify-center bg-black">
+        <div className="p-6 rounded-lg shadow-lg w-full max-w-md">
           <DialogHeader>
             <DialogTitle className="text-xl font-semibold text-center">
               Set Up New Password
@@ -55,8 +78,8 @@ export function PasswordSetupModal() {
 
           <Form {...form}>
             <form
+              id="newPasswordForm"
               onSubmit={form.handleSubmit(onSubmit)}
-              id="setNewPassword"
               className="space-y-4 mt-4"
             >
               <FormField
@@ -100,18 +123,17 @@ export function PasswordSetupModal() {
                   </FormItem>
                 )}
               />
-
-              <DialogFooter>
-                <Button
-                  form="setNewPassword"
-                  type="submit"
-                  className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition"
-                >
-                  Set Password
-                </Button>
-              </DialogFooter>
             </form>
           </Form>
+          <DialogFooter>
+            <Button
+              form="newPasswordForm"
+              type="submit"
+              className="w-full mt-4 bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition"
+            >
+              Set Password
+            </Button>
+          </DialogFooter>
         </div>
       </DialogContent>
     </Dialog>

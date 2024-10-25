@@ -20,9 +20,12 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
 import { labelRoles } from "@/components/table/data";
 import { userSchemaAdditional } from "@/types/index";
+import { toast } from "@/components/ui/use-toast";
+import { changeUserRole } from "@/actions/user.actions";
+import ActionConfirm from "../features/actionConfirm";
+import { useState } from "react";
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>;
@@ -31,9 +34,55 @@ interface DataTableRowActionsProps<TData> {
 export function DataTableRowActions<TData>({
   row,
 }: DataTableRowActionsProps<TData>) {
+  const [openConfirm, setOpenConfirm] = useState(false);
+  const [selectedRole, setSelectedRole] = useState<string | null>(null);
+
   const user = userSchemaAdditional.parse(row.original);
 
+  function onCopyObjectId() {
+    navigator.clipboard
+      .writeText(user.id)
+      .then(() => {
+        toast({
+          variant: "default",
+          description: "ObjectId copied to clipboard",
+        });
+      })
+      .catch((err) => {
+        toast({
+          variant: "destructive",
+          description: err,
+        });
+      });
+  }
+  const onRoleChange = async (role: string) => {
+    setSelectedRole(role);
+    setOpenConfirm(true); // Trigger the ActionConfirm popup
+  };
+
+  const handleConfirmRoleChange = async () => {
+    setOpenConfirm(false); // Close confirmation popup
+    if (selectedRole) {
+      const response = await changeUserRole(user.id, selectedRole);
+      if (response.success) {
+        toast({
+          variant: "default",
+          description: `Role changed to ${selectedRole} successfully!`,
+        });
+      } else {
+        toast({
+          variant: "destructive",
+          description: response.error || "Failed to change role.",
+        });
+      }
+    }
+  };
+  function onDelete() {
+    console.log("Delete");
+  }
+  function onEdit() {}
   return (
+    <>
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
@@ -47,7 +96,10 @@ export function DataTableRowActions<TData>({
       <DropdownMenuContent align="end" className="w-[160px]">
         {/* Edit button */}
         <DropdownMenuItem asChild>
-          <Button variant="outline" className="flex w-full items-center justify-between gap-x-2">
+          <Button
+            variant="outline"
+            className="flex w-full items-center justify-between gap-x-2"
+          >
             Edit
             <Pencil1Icon className="h-4 w-4" />
           </Button>
@@ -55,7 +107,11 @@ export function DataTableRowActions<TData>({
 
         {/* Copy ObjectId button */}
         <DropdownMenuItem asChild className="my-1">
-          <Button variant="outline" className="flex w-full items-center justify-between gap-x-2">
+          <Button
+            onClick={onCopyObjectId}
+            variant="outline"
+            className="flex w-full items-center justify-between gap-x-2"
+          >
             Copy ObjectId
             <ClipboardCopyIcon className="h-4 w-4" />
           </Button>
@@ -69,7 +125,10 @@ export function DataTableRowActions<TData>({
             Role
           </DropdownMenuSubTrigger>
           <DropdownMenuSubContent>
-            <DropdownMenuRadioGroup value={user.role}>
+            <DropdownMenuRadioGroup
+              value={user.roleAccess}
+              onValueChange={onRoleChange}
+            >
               {labelRoles.map((label) => (
                 <DropdownMenuRadioItem key={label.value} value={label.value}>
                   {label.label}
@@ -89,5 +148,17 @@ export function DataTableRowActions<TData>({
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
+    {/* Confirmation Popup */}
+    {openConfirm && (
+      <ActionConfirm
+        message={`Are you sure you want to change the role to ${selectedRole}?`}
+        onConfirm={handleConfirmRoleChange}
+        onCancel={() => {
+          setOpenConfirm(false);
+          toast({ variant: "default", description: "Role change canceled." });
+        }}
+      />
+    )}
+    </>
   );
 }

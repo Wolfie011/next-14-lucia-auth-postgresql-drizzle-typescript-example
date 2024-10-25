@@ -1,5 +1,5 @@
 {
-  "id": "c96e82a1-5d1d-4c93-876b-0df39c924a42",
+  "id": "c07ceac3-fc35-4efc-a984-fc769989b4f4",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -10,7 +10,7 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "text",
+          "type": "uuid",
           "primaryKey": true,
           "notNull": true
         },
@@ -60,7 +60,7 @@
         },
         "user_id": {
           "name": "user_id",
-          "type": "text",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },
@@ -69,6 +69,13 @@
           "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
         }
       },
       "indexes": {},
@@ -83,7 +90,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -97,13 +104,13 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "text",
+          "type": "uuid",
           "primaryKey": true,
           "notNull": true
         },
         "user_id": {
           "name": "user_id",
-          "type": "text",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },
@@ -131,21 +138,43 @@
           "primaryKey": false,
           "notNull": false
         },
-        "role": {
-          "name": "role",
-          "type": "role",
+        "role_access": {
+          "name": "role_access",
+          "type": "role_access",
           "typeSchema": "public",
           "primaryKey": false,
           "notNull": true,
           "default": "'user'"
         },
-        "status": {
-          "name": "status",
-          "type": "status",
+        "role_type": {
+          "name": "role_type",
+          "type": "role_type",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'nonRole'"
+        },
+        "user_status": {
+          "name": "user_status",
+          "type": "user_status",
           "typeSchema": "public",
           "primaryKey": false,
           "notNull": true,
           "default": "'not-activated'"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
         }
       },
       "indexes": {},
@@ -160,7 +189,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -182,7 +211,7 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "text",
+          "type": "uuid",
           "primaryKey": true,
           "notNull": true
         },
@@ -200,9 +229,23 @@
         },
         "domain_id": {
           "name": "domain_id",
-          "type": "text",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
         }
       },
       "indexes": {},
@@ -217,7 +260,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -235,8 +278,8 @@
     }
   },
   "enums": {
-    "public.role": {
-      "name": "role",
+    "public.role_access": {
+      "name": "role_access",
       "schema": "public",
       "values": [
         "user",
@@ -244,8 +287,19 @@
         "mod"
       ]
     },
-    "public.status": {
-      "name": "status",
+    "public.role_type": {
+      "name": "role_type",
+      "schema": "public",
+      "values": [
+        "nonRole",
+        "IT",
+        "Doctor",
+        "Nurse",
+        "Technician"
+      ]
+    },
+    "public.user_status": {
+      "name": "user_status",
       "schema": "public",
       "values": [
         "active",

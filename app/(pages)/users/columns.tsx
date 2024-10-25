@@ -6,7 +6,11 @@ import { Checkbox } from "@/components/ui/checkbox";
 
 import { Badge } from "@/components/ui/badge";
 
-import { labelRoles, accountStatuses } from "@/components/table/data";
+import {
+  labelRoles,
+  accountStatuses,
+  labelRolePrimary,
+} from "@/components/table/data";
 
 import { DataTableColumnHeader } from "@/components/table/data-table-column-header";
 
@@ -47,25 +51,48 @@ export const columns: ColumnDef<UserAdditionalSchema>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Identyfikator" />
     ),
-    cell: ({ row }) => <div className="truncate">{row.getValue("id")}</div>,
-    minSize: 80,
+    cell: ({ row }) => <div className="truncate">{row.getValue("id")}</div>
   },
+  {
+    accessorKey: "roleType",
+    header: "Primary Role",
+    cell: ({ row }) => {
+      const rolePrimary = labelRolePrimary.find(
+        (label) => label.value === row.original.roleType
+      );
+      return rolePrimary ? <Badge variant="outline">{rolePrimary.label}</Badge> : null;
+    },
+    filterFn: (row, columnId, filterValue) => filterValue.includes(row.original.roleType),
+    minSize: 60,
+    maxSize: 120,
+  },
+  {
+    accessorKey: "roleAccess",
+    header: "Access",
+    cell: ({ row }) => {
+      const roleAccess = labelRoles.find(
+        (label) => label.value === row.original.roleAccess
+      );
+      return roleAccess ? <Badge variant="secondary">{roleAccess.label}</Badge> : null;
+    },
+    filterFn: (row, columnId, filterValue) => filterValue.includes(row.original.roleAccess),
+    minSize: 60,
+    maxSize: 120,
+  },
+  
   {
     accessorKey: "username",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Username" />
     ),
     cell: ({ row }) => {
-      const label = labelRoles.find((label) => label.value === row.original.role);
-
       return (
-        <div className="flex items-center space-x-2 min-w-0">
-          {label && <Badge variant="outline">{label.label}</Badge>}
-          <span className="flex-grow truncate font-medium">{row.getValue("username")}</span>
-        </div>
+        <span className="flex-grow truncate font-medium">
+          {row.getValue("username")}
+        </span>
       );
     },
-    minSize: 150,
+    minSize: 120,
     maxSize: 200,
   },
   {
@@ -73,7 +100,9 @@ export const columns: ColumnDef<UserAdditionalSchema>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="First Name" />
     ),
-    cell: ({ row }) => <div className="truncate">{row.getValue("firstname")}</div>,
+    cell: ({ row }) => (
+      <div className="truncate">{row.getValue("firstname")}</div>
+    ),
     minSize: 100,
   },
   {
@@ -81,7 +110,9 @@ export const columns: ColumnDef<UserAdditionalSchema>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Last Name" />
     ),
-    cell: ({ row }) => <div className="truncate">{row.getValue("lastname")}</div>,
+    cell: ({ row }) => (
+      <div className="truncate">{row.getValue("lastname")}</div>
+    ),
     minSize: 100,
   },
   {
@@ -107,7 +138,9 @@ export const columns: ColumnDef<UserAdditionalSchema>[] = [
       <DataTableColumnHeader column={column} title="Status" />
     ),
     cell: ({ row }) => {
-      const status = accountStatuses.find((status) => status.value === row.getValue("status"));
+      const status = accountStatuses.find(
+        (status) => status.value === row.getValue("status")
+      );
 
       if (!status) {
         return null;
