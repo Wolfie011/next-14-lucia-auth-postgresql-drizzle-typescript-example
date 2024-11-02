@@ -1,8 +1,7 @@
 // @/types/index
 import { z } from "zod";
 
-export const SignUpSchema = z
-  .object({
+export const SignUpSchema = z.object({
     username: z.string(),
     password: z.string(),
     confirmPassword: z.string(),
@@ -70,3 +69,28 @@ export const createUserSchema = z.object({
   username: z.string().min(2).max(50),
   domain: z.string().min(1),
 });
+
+export const unitSchema = z.object({
+  id: z.string(),
+  unitName: z.string(),
+  unitLocation: z.string(),
+  unitContactPhone: z.string(),
+  unitEmail: z.string(),
+  unitStatus: z.string(),
+  createdAt: z.string().datetime(),
+  updatedAt: z.string().datetime(),
+});
+export type UnitSchema = z.infer<typeof unitSchema>;
+
+export const patientSchema = z.object({
+  patientId: z.string(),
+  patientFirstName: z.string(),
+  patientLastName: z.string(),
+  patientPesel: z.string(),
+  patientBirthDate: z.string(),
+  patientGender: z.string(),
+  patientDomainID: z.string(),
+  patientUnitID: z.string(),
+  patientStatus: z.string(),
+});
+export type PatientSchema = z.infer<typeof patientSchema>;
